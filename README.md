@@ -80,7 +80,19 @@ The app offers to install the plugin on first launch.
 
 ## Install
 
-No releases yet — build it:
+Download the [latest release](https://github.com/burakCokyildirim/clawde/releases/latest): open the
+`.pkg`, or unzip the `.zip` into `/Applications`. Both are signed with a Developer ID and notarized,
+so they open without argument. It runs in the menu bar with no Dock icon; the pet is off until you
+switch it on, from Settings or the paw button at the top of the dropdown. After that it updates
+itself.
+
+On first launch it offers to install its hook plugin, which is what tells it when a session changes
+state. Restart any Claude Code sessions that were already running — a session keeps the hooks it
+started with.
+
+Requires macOS 15 or newer and the Claude Code CLI.
+
+To build it instead:
 
 ```bash
 git clone --recurse-submodules https://github.com/burakCokyildirim/clawde.git
@@ -89,11 +101,8 @@ xcodebuild -project Clawde.xcodeproj -scheme Clawde -configuration Release \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
-Move the built `Clawde.app` to `/Applications` and launch it. It runs in the menu bar with no Dock
-icon; the pet is off until you switch it on.
-
-Requirements: macOS 15 or newer, Xcode 26+ to build, and the Claude Code CLI. The `justfile` has the
-shortcuts used day to day (`just build`, `just test`, `just swap`).
+That needs Xcode 26+. The `justfile` has the shortcuts used day to day (`just build`, `just test`,
+`just swap`).
 
 ### Upgrading from Claude Status
 
