@@ -106,8 +106,10 @@ identifiers of its own, so the two are separate apps. If you have the old one:
   do, theirs still report to the old name and Clawde falls back to watching files and polling.
 - **Remove the old app from Finder**, not from a shell: macOS App Management refuses `rm` and `mv`
   on an installed app bundle even for an admin.
-- Everything you had set — the pet's place on screen, every setting, which sessions you had seen,
-  the productivity history — is carried over the first time Clawde runs.
+- **Your settings come across only from a build of this project** — the pet's place on screen, every
+  setting, which sessions you had seen, the productivity history. An app installed from Claude
+  Status's own releases keeps them in a group container only that app is entitled to, which macOS
+  will not let Clawde read, so coming from there is a fresh start.
 - Widgets you had placed need adding again, and macOS asks once more for permission to send Apple
   Events, because the app it granted that to is a different app now.
 
