@@ -51,6 +51,10 @@ jobs:
       - name: Build universal plugin binaries
         run: |
           cd clawde-plugin
+          # The plugin pins its channel in rust-toolchain.toml, so cargo switches
+          # to that toolchain here and the targets the action added to stable are
+          # not there. Add them to the toolchain that actually builds.
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
           cargo build --release --target aarch64-apple-darwin
           cargo build --release --target x86_64-apple-darwin
           mkdir -p plugins/clawde/scripts
