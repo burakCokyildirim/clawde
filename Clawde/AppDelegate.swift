@@ -219,7 +219,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Get the base icon
         let baseIcon: NSImage
         if let icon = NSImage(named: "MenuBarIcon") {
-            icon.size = NSSize(width: 18, height: 18)
+            // Scaled by height, not squared off: the character is half again as
+            // wide as it is tall, and forcing it into 18x18 left the drawing
+            // filling under half the height a menu bar icon has to work with.
+            let height: CGFloat = 16
+            let art = icon.size
+            icon.size = NSSize(
+                width: (height * art.width / max(art.height, 1)).rounded(),
+                height: height
+            )
             baseIcon = icon
         } else {
             baseIcon = NSImage(
