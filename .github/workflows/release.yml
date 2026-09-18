@@ -237,8 +237,20 @@ jobs:
         run: |
           APP_PATH="DerivedData/Export/Clawde.app"
           PKG_NAME="Clawde-${{ steps.version.outputs.version }}.pkg"
+          # pkgbuild marks an app bundle relocatable by default, which writes a
+          # <relocate> block naming our bundle id. The installer then looks for
+          # any copy of that id the machine already has and overwrites it where
+          # it stands, under whatever name it has, instead of installing to
+          # /Applications. Anyone who has ever run a build of this app gets the
+          # update somewhere they did not ask for, and /Applications stays empty.
+          rm -rf pkgroot component.plist
+          mkdir pkgroot
+          ditto "$APP_PATH" "pkgroot/Clawde.app"
+          pkgbuild --analyze --root pkgroot component.plist
+          /usr/libexec/PlistBuddy -c "Add :0:BundleIsRelocatable bool false" component.plist
           pkgbuild \
-            --component "$APP_PATH" \
+            --root pkgroot \
+            --component-plist component.plist \
             --install-location "/Applications" \
             --identifier "com.burakcokyildirim.clawde" \
             --version "${{ steps.version.outputs.version }}" \
