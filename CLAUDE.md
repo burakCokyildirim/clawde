@@ -221,12 +221,18 @@ Triggered by publishing a GitHub release. The release tag becomes `MARKETING_VER
 
 **Build & Notarize job:**
 1. Import Developer ID certificate from `CERTIFICATE_P12` secret into a temporary keychain
-2. Install provisioning profiles (`PROVISIONING_PROFILE_APP`, `PROVISIONING_PROFILE_WIDGET`) — required for App Groups entitlement
+2. Install provisioning profiles (`PROVISIONING_PROFILE_APP`, `PROVISIONING_PROFILE_WIDGET`) — skipped when those secrets are unset (see below)
 3. Inject per-target `PROVISIONING_PROFILE_SPECIFIER` into the pbxproj (Ruby script patches by bundle ID)
 4. `xcodebuild archive` with manual signing, hardened runtime
 5. `xcodebuild -exportArchive` with `ExportOptions.plist` mapping each bundle ID to its provisioning profile
 6. Notarize the `.app` and `.pkg` via `notarytool` (fetches Apple log on failure)
 7. Upload `.zip` and `.pkg` as release assets
+
+The two profile secrets are optional, and the steps that use them are skipped
+when they are unset. The app claims one App Group, team-prefixed as macOS
+documents, and no other entitlement that has to be provisioned; whether
+Developer ID signing still wants a profile for it has not been established here.
+Set them if a signing step complains about entitlements — nothing else changes.
 
 **Update Appcast job:**
 1. Downloads Sparkle tools, generates `appcast.xml` with EdDSA signature
@@ -240,10 +246,10 @@ Triggered by publishing a GitHub release. The release tag becomes `MARKETING_VER
 | `CERTIFICATE_PASSWORD` | P12 password |
 | `CODE_SIGN_IDENTITY` | e.g. `Developer ID Application: Name (TEAMID)` |
 | `DEVELOPMENT_TEAM` | Apple team ID |
-| `PROVISIONING_PROFILE_APP` | Base64 provisioning profile for main app (with App Groups) |
-| `PROVISIONING_PROFILE_WIDGET` | Base64 provisioning profile for widget (with App Groups) |
+| `PROVISIONING_PROFILE_APP` | Optional. Base64 Developer ID profile for the app |
+| `PROVISIONING_PROFILE_WIDGET` | Optional. Base64 Developer ID profile for the widget |
 | `INSTALLER_SIGN_IDENTITY` | Developer ID Installer identity for `.pkg` |
 | `APPLE_ID` | Apple ID for notarization |
 | `APPLE_ID_PASSWORD` | App-specific password for notarization |
-| `SPARKLE_ED_PUBLIC_KEY` | EdDSA public key embedded in builds |
+| `SPARKLE_ED_PUBLIC_KEY` | EdDSA public key, substituted into `SUPublicEDKey` through `SPARKLE_ED_KEY` |
 | `SPARKLE_PRIVATE_KEY` | EdDSA private key for signing appcast |
