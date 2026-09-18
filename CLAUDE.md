@@ -228,11 +228,13 @@ Triggered by publishing a GitHub release. The release tag becomes `MARKETING_VER
 6. Notarize the `.app` and `.pkg` via `notarytool` (fetches Apple log on failure)
 7. Upload `.zip` and `.pkg` as release assets
 
-The two profile secrets are optional, and the steps that use them are skipped
-when they are unset. The app claims one App Group, team-prefixed as macOS
-documents, and no other entitlement that has to be provisioned; whether
-Developer ID signing still wants a profile for it has not been established here.
-Set them if a signing step complains about entitlements — nothing else changes.
+The two profile secrets are optional and normally unset: the app needs no
+provisioning profile. It claims one App Group, team-prefixed as macOS documents,
+and nothing else that has to be provisioned. Archiving, exporting and pkgbuilding
+with the real Developer ID identities and no profile produces a bundle that
+passes `codesign --verify --deep --strict` and carries no
+`embedded.provisionprofile`. Set them only if some future capability asks for
+one; the steps that use them are skipped while they are unset.
 
 **Update Appcast job:**
 1. Downloads Sparkle tools, generates `appcast.xml` with EdDSA signature

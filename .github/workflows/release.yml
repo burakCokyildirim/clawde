@@ -15,11 +15,13 @@ jobs:
     runs-on: macos-latest
     outputs:
       zip_name: ${{ steps.package.outputs.zip_name }}
-    # The app claims one App Group, team-prefixed as macOS documents, and no
-    # other entitlement that has to be provisioned. Whether Developer ID signing
-    # still wants a profile for it is not something this repo has established,
-    # so the profile steps below run when the secrets are there and are skipped
-    # when they are not: set them if a signing step complains about entitlements.
+    # No provisioning profile is needed: the app claims one App Group,
+    # team-prefixed as macOS documents, and nothing else that has to be
+    # provisioned. Verified on 2026-09-18 by archiving, exporting and pkgbuilding
+    # locally with the real Developer ID identities and no profile at all — the
+    # result verifies --deep --strict and carries no embedded.provisionprofile.
+    # The steps below stay for a capability that ever does need one; they run
+    # only when their secrets are set.
     env:
       PROVISIONING_PROFILE_APP: ${{ secrets.PROVISIONING_PROFILE_APP }}
       PROVISIONING_PROFILE_WIDGET: ${{ secrets.PROVISIONING_PROFILE_WIDGET }}
