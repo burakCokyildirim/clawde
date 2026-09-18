@@ -28,13 +28,14 @@
 	<string>Clawde needs to send Apple Events to terminal apps like iTerm2 to focus the correct tab and window when you click a session.</string>
 	<key>SUFeedURL</key>
 	<string>https://burakcokyildirim.github.io/clawde/appcast.xml</string>
-	<!-- Empty on purpose, and the only thing keeping Sparkle off: AppDelegate
-	     starts it for a non-empty key. The feed above is where release.yml
-	     publishes, and nothing is there yet. Fill this in with the public half of
-	     our own EdDSA pair, the same pair whose private half signs the appcast,
-	     and never with a key another project's feed is signed with. -->
+	<!-- The public half of the EdDSA pair whose private half signs the appcast,
+	     passed in by release.yml from the SPARKLE_ED_PUBLIC_KEY secret. It is
+	     empty in every other build, and AppDelegate starts Sparkle only for a
+	     non-empty key, so nothing but a release ever looks for an update. It was
+	     upstream's key, hardcoded, until 2026-09-18: their feed with their
+	     signature would have replaced this app with theirs. -->
 	<key>SUPublicEDKey</key>
-	<string></string>
+	<string>$(SPARKLE_ED_KEY)</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUScheduledCheckInterval</key>
