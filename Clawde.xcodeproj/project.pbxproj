@@ -363,7 +363,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				APP_GROUP_ID = "group.com.burakcokyildirim.clawde";
-				LEGACY_APP_GROUP_ID = "TXQN7T6NNQ.com.poisonpenllc.Claude-Status";
 				SPARKLE_ED_KEY = "";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -430,7 +429,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				APP_GROUP_ID = "group.com.burakcokyildirim.clawde";
-				LEGACY_APP_GROUP_ID = "TXQN7T6NNQ.com.poisonpenllc.Claude-Status";
 				SPARKLE_ED_KEY = "";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;

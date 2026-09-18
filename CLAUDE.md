@@ -48,8 +48,10 @@ change with it:
 | URL scheme | `clawde://` | the widget's deep links |
 | `.cstatus` file and its JSON keys | unchanged | the plugin writes them |
 
-`AppGroupMigration` carries the old group's contents across on first launch and
-is the only place the previous identifiers may appear.
+No previous identifier appears anywhere any more. A carry-over from the old App
+Group was tried and dropped: macOS keeps a group container to the apps entitled
+to it, so reading one needs it in the entitlements, and the group Claude Status's
+own releases write to belongs to that project's team and can never be claimed here.
 
 ## Dependencies (SPM)
 
@@ -114,7 +116,6 @@ Shared/                                # Models shared between app and widget
   ClaudeSession.swift                  # ClaudeSession model, SessionState enum, SessionSource enum
   ProductivityStats.swift              # ProductivityStats and ProductivityData models
   AppGroup.swift                       # The App Group id, its defaults suite and container
-  AppGroupMigration.swift              # One-time carry-over from the identifiers used before the rename
 
 ClawdeWidget/                          # Widget extension target
   ClawdeWidgetBundle.swift             # Widget bundle (3 widgets) and the session widget
