@@ -39,6 +39,8 @@ Off by default. Turn it on in Settings, or with the paw button at the top of the
 
 ## In the menu bar
 
+![The menu bar list, with three sessions and the day's usage](assets/menu-bar.png)
+
 Every live session, the one that most wants you at the top: what it is doing, the name it goes by,
 its folder and host app, and how long ago it last moved. Click a row and Clawde brings that session
 forward — the right tab in iTerm2 or Ghostty, the right window in VS Code, Xcode or a JetBrains
