@@ -27,11 +27,12 @@
 	<key>NSAppleEventsUsageDescription</key>
 	<string>Clawde needs to send Apple Events to terminal apps like iTerm2 to focus the correct tab and window when you click a session.</string>
 	<key>SUFeedURL</key>
-	<string>https://gmr.github.io/claude-status/appcast.xml</string>
-	<!-- Empty on purpose: AppDelegate starts Sparkle only for a non-empty key, and
-	     the feed above is the upstream project's, signed with its key. A build of
-	     this fork would take an update from it and replace itself. The key comes
-	     back with our own feed and our own key pair. -->
+	<string>https://burakcokyildirim.github.io/clawde/appcast.xml</string>
+	<!-- Empty on purpose, and the only thing keeping Sparkle off: AppDelegate
+	     starts it for a non-empty key. The feed above is where release.yml
+	     publishes, and nothing is there yet. Fill this in with the public half of
+	     our own EdDSA pair, the same pair whose private half signs the appcast,
+	     and never with a key another project's feed is signed with. -->
 	<key>SUPublicEDKey</key>
 	<string></string>
 	<key>SUEnableAutomaticChecks</key>
