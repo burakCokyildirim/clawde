@@ -30,7 +30,8 @@ The justfile handles `MACOSX_DEPLOYMENT_TARGET=15.0` override (needed for Xcode 
 - **No App Sandbox**: required for `proc_pidinfo`, `sysctl KERN_PROCARGS2`, and AppleScript automation
 - Bundle ID: `com.burakcokyildirim.clawde`
 - Widget Bundle ID: `com.burakcokyildirim.clawde.widget`
-- App Group: `group.com.burakcokyildirim.clawde` (shared data between app and widget)
+- App Group: `TXQN7T6NNQ.com.burakcokyildirim.clawde` (shared data between app and widget), written
+  as `$(DEVELOPMENT_TEAM).com.burakcokyildirim.clawde` so every build shares one container
 - URL Scheme: `clawde://`
 
 ### Identity — what not to "finish" renaming
@@ -43,7 +44,7 @@ change with it:
 |---|---|---|
 | Darwin notification | `com.burakcokyildirim.clawde.session-changed` | posted by `clawde-plugin`'s two binaries |
 | Marketplace / plugin key | `clawde-marketplace` / `clawde@clawde-marketplace` | `marketplace.json` and `plugin.json` in the submodule |
-| App Group | `group.com.burakcokyildirim.clawde` | every setting and file already on a user's disk |
+| App Group | `$(DEVELOPMENT_TEAM).com.burakcokyildirim.clawde` | every setting and file already on a user's disk |
 | Widget kinds | `ClawdeStatusWidget`, `ClawdeProductivityWidget`, `ClawdeScoreWidget` | widgets a user has already placed |
 | URL scheme | `clawde://` | the widget's deep links |
 | `.cstatus` file and its JSON keys | unchanged | the plugin writes them |
@@ -201,7 +202,7 @@ An optional floating character, off by default. `PetWindowController` owns a bor
 | `~/.claude/projects/<path>/sessions-index.json` | Session index with metadata, prompts, timestamps |
 | `~/.claude/projects/<path>/<uuid>.jsonl` | Conversation logs per session |
 | `~/.claude/plugins/installed_plugins.json` | Plugin registry |
-| `~/Library/Group Containers/group.com.burakcokyildirim.clawde/productivity.json` | Shared productivity data |
+| `~/Library/Group Containers/TXQN7T6NNQ.com.burakcokyildirim.clawde/productivity.json` | Shared productivity data |
 
 ## CI/CD
 

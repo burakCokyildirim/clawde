@@ -3,9 +3,10 @@ import Foundation
 /// The App Group shared between the main app and the widget extension.
 ///
 /// The identifier is injected at build time via the `APP_GROUP_ID` build setting
-/// (exposed through Info.plist), so a development build can substitute a
-/// team-prefixed group (e.g. `TEAMID.com.burakcokyildirim.clawde`) that macOS
-/// accepts without a provisioning profile. Falls back to the release identifier.
+/// (exposed through Info.plist), which resolves to `<team>.com.burakcokyildirim.clawde`
+/// — the form Apple documents for macOS, and the one every build shares, so what
+/// a development build keeps is what a signed one reads. The fallback below is
+/// only reached if that key is missing from the bundle.
 nonisolated enum AppGroup {
 
     static let identifier: String = {
@@ -13,7 +14,7 @@ nonisolated enum AppGroup {
            !id.isEmpty {
             return id
         }
-        return "group.com.burakcokyildirim.clawde"
+        return "TXQN7T6NNQ.com.burakcokyildirim.clawde"
     }()
 
     /// Shared defaults suite backed by the app group.

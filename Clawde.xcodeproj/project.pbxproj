@@ -362,7 +362,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_GROUP_ID = "group.com.burakcokyildirim.clawde";
+				APP_GROUP_ID = "$(DEVELOPMENT_TEAM).com.burakcokyildirim.clawde";
 				SPARKLE_ED_KEY = "";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -428,7 +428,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APP_GROUP_ID = "group.com.burakcokyildirim.clawde";
+				APP_GROUP_ID = "$(DEVELOPMENT_TEAM).com.burakcokyildirim.clawde";
 				SPARKLE_ED_KEY = "";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;

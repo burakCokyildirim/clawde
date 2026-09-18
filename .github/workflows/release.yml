@@ -15,6 +15,14 @@ jobs:
     runs-on: macos-latest
     outputs:
       zip_name: ${{ steps.package.outputs.zip_name }}
+    # The app claims one App Group, team-prefixed as macOS documents, and no
+    # other entitlement that has to be provisioned. Whether Developer ID signing
+    # still wants a profile for it is not something this repo has established,
+    # so the profile steps below run when the secrets are there and are skipped
+    # when they are not: set them if a signing step complains about entitlements.
+    env:
+      PROVISIONING_PROFILE_APP: ${{ secrets.PROVISIONING_PROFILE_APP }}
+      PROVISIONING_PROFILE_WIDGET: ${{ secrets.PROVISIONING_PROFILE_WIDGET }}
 
     steps:
       - name: Checkout
@@ -74,9 +82,7 @@ jobs:
           rm "$RUNNER_TEMP/cert.p12"
 
       - name: Install provisioning profiles
-        env:
-          PROVISIONING_PROFILE_APP: ${{ secrets.PROVISIONING_PROFILE_APP }}
-          PROVISIONING_PROFILE_WIDGET: ${{ secrets.PROVISIONING_PROFILE_WIDGET }}
+        if: env.PROVISIONING_PROFILE_APP != ''
         run: |
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           echo "$PROVISIONING_PROFILE_APP" | base64 --decode \
@@ -103,6 +109,7 @@ jobs:
 
       - name: Extract provisioning profile names
         id: profiles
+        if: env.PROVISIONING_PROFILE_APP != ''
         run: |
           APP_PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" /dev/stdin <<< \
             "$(/usr/bin/security cms -D -i "$HOME/Library/MobileDevice/Provisioning Profiles/app.provisionprofile")")
@@ -112,6 +119,7 @@ jobs:
           echo "widget_name=$WIDGET_PROFILE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Set provisioning profiles in project
+        if: env.PROVISIONING_PROFILE_APP != ''
         env:
           APP_PROFILE_NAME: ${{ steps.profiles.outputs.app_name }}
           WIDGET_PROFILE_NAME: ${{ steps.profiles.outputs.widget_name }}
@@ -168,9 +176,11 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :teamID string $TEAM_ID" ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :signingCertificate string Developer ID Application" ExportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" ExportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.burakcokyildirim.clawde string $APP_PROFILE" ExportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.burakcokyildirim.clawde.widget string $WIDGET_PROFILE" ExportOptions.plist
+          if [ -n "$APP_PROFILE" ]; then
+            /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" ExportOptions.plist
+            /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.burakcokyildirim.clawde string $APP_PROFILE" ExportOptions.plist
+            /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.burakcokyildirim.clawde.widget string $WIDGET_PROFILE" ExportOptions.plist
+          fi
 
       - name: Export archive
         run: |
