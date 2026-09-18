@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Clawde</title>
+        <item>
+            <title>2.0.0</title>
+            <pubDate>Fri, 18 Sep 2026 14:47:33 +0000</pubDate>
+            <sparkle:version>3</sparkle:version>
+            <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/burakCokyildirim/clawde/releases/download/v2.0.0/Clawde-2.0.0.zip" length="3101344" type="application/octet-stream" sparkle:edSignature="HMxsjnBRa9vQ5CWuk46OLBpLQ7OVelJeK5wLEi28+GHoW+HUzGVzLumO81adnE/yB1Y9QAw3BU2JHF9CHmz+Bw=="/>
+        </item>
+    </channel>
+</rss>
