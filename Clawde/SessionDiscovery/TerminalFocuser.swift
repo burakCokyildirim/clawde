@@ -1,4 +1,6 @@
 import AppKit
+import Darwin
+import os
 
 /// Focuses the appropriate app for a Claude session based on its source.
 struct SessionFocuser {
@@ -8,7 +10,7 @@ struct SessionFocuser {
     func focus(session: ClaudeSession) {
         switch session.source {
         case .terminal(let app):
-            focusTerminal(app: app, sessionId: session.iTermSessionId, tmuxPaneId: session.tmuxPaneId, tmuxSocket: session.tmuxSocket, workingDirectory: session.workingDirectory)
+            focusTerminal(session, app: app)
         case .xcode:
             activateApp(bundleId: "com.apple.dt.Xcode")
         case .vscode:
@@ -119,12 +121,14 @@ struct SessionFocuser {
         "Ghostty": "com.mitchellh.ghostty",
     ]
 
-    private func focusTerminal(app: String, sessionId: String?, tmuxPaneId: String?, tmuxSocket: String?, workingDirectory: String) {
-        // tmux sessions: select the pane/window then activate the terminal
-        if let paneId = tmuxPaneId {
-            focusTmuxPane(paneId: paneId, socket: tmuxSocket)
+    private func focusTerminal(_ session: ClaudeSession, app: String) {
+        // tmux sessions: select the pane/window then activate the terminal.
+        // The tab's own device is tmux's here, not the session's, so the tab
+        // match below would not find it either way.
+        if let paneId = session.tmuxPaneId {
+            focusTmuxPane(paneId: paneId, socket: session.tmuxSocket)
             // iTerm2: use AppleScript to focus the tab hosting tmux
-            if app == "iTerm2", let sessionId {
+            if app == "iTerm2", let sessionId = session.iTermSessionId {
                 focusBySessionId(sessionId)
             } else {
                 activateTerminalApp(name: app)
@@ -134,22 +138,92 @@ struct SessionFocuser {
 
         // iTerm2 supports focusing a specific session via AppleScript
         if app == "iTerm2" {
-            if let sessionId {
+            if let sessionId = session.iTermSessionId {
                 focusBySessionId(sessionId)
                 return
             }
-            openITermTab(at: workingDirectory)
+            openITermTab(at: session.workingDirectory)
             return
         }
 
         // Ghostty supports focusing a specific terminal via AppleScript
         if app == "Ghostty" {
-            focusGhosttyTerminal(workingDirectory: workingDirectory)
+            focusGhosttyTerminal(workingDirectory: session.workingDirectory)
+            return
+        }
+
+        // Terminal.app keeps no session id, but every tab knows the device it
+        // is attached to, and so does the process.
+        if app == "Terminal", let tty = Self.controllingTTY(for: session.pid) {
+            focusTerminalAppTab(tty: tty)
             return
         }
 
         // For other terminals, just activate the app
         activateTerminalApp(name: app)
+    }
+
+    // MARK: - Terminal.app
+
+    /// The terminal device a process is attached to, spelled the way
+    /// Terminal.app spells a tab's `tty`: `/dev/ttysNNN`.
+    ///
+    /// Nil when the process has no controlling terminal, which is every session
+    /// the Claude desktop app runs, and every one started by a script.
+    static func controllingTTY(for pid: pid_t) -> String? {
+        var info = proc_bsdinfo()
+        let size = Int32(MemoryLayout<proc_bsdinfo>.size)
+        guard proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size else { return nil }
+        // NODEV comes back as every bit set in this unsigned field.
+        guard info.e_tdev != UInt32.max, info.e_tdev != 0 else { return nil }
+        guard let name = devname(dev_t(info.e_tdev), S_IFCHR) else { return nil }
+        return "/dev/" + String(cString: name)
+    }
+
+    /// Raises the Terminal.app tab attached to `tty`, window and all.
+    ///
+    /// Without this the app is only activated, and comes forward on whichever
+    /// window was last in front — which, with a second window open, looks
+    /// exactly like the click did nothing. Matching the device gives Terminal
+    /// what iTerm2 gets from its session id.
+    private func focusTerminalAppTab(tty: String) {
+        // Falls back to activating the app for every way this can fail — a path
+        // we would not write, a refused Apple Event, a tab that has been closed
+        // — so the click never does nothing at all, which is what it did before
+        // Terminal had a tab to aim at.
+        guard let script = Self.terminalTabScript(tty: tty), runAppleScript(script) else {
+            activateTerminalApp(name: "Terminal")
+            return
+        }
+    }
+
+    /// A device path as `devname` writes one, and nothing that could close a
+    /// string literal and carry on as AppleScript.
+    private static let safeTTYPattern = try! NSRegularExpression(pattern: #"^/dev/[A-Za-z0-9]+$"#)
+
+    /// The script that raises `tty`'s tab, or nil if the path is not one we wrote.
+    ///
+    /// It activates even when no tab matches: a session whose tab has been closed
+    /// while the process lives on should still bring the app forward, as it did
+    /// before any of this.
+    static func terminalTabScript(tty: String) -> String? {
+        let range = NSRange(tty.startIndex..., in: tty)
+        guard safeTTYPattern.firstMatch(in: tty, range: range) != nil else { return nil }
+        return """
+        tell application "Terminal"
+            repeat with aWindow in windows
+                repeat with aTab in tabs of aWindow
+                    if tty of aTab is "\(tty)" then
+                        set selected of aTab to true
+                        set index of aWindow to 1
+                        activate
+                        return
+                    end if
+                end repeat
+            end repeat
+            activate
+        end tell
+        """
     }
 
     /// Activates a terminal app by bundle ID, falling back to name matching.
@@ -329,9 +403,29 @@ struct SessionFocuser {
         runAppleScript(script)
     }
 
-    private func runAppleScript(_ source: String) {
-        guard let script = NSAppleScript(source: source) else { return }
+    /// Where a refused Apple Event goes, so a click that quietly does nothing
+    /// can be explained. `errAEEventNotPermitted` (-1743) means macOS has not
+    /// been asked, or has been told no, under Privacy & Security ▸ Automation.
+    private static let log = Logger(subsystem: "com.burakcokyildirim.clawde", category: "focus")
+
+    /// Runs `source`, and says whether it got through.
+    ///
+    /// Apple Events are refused with `errAEEventNotPermitted` (-1743) until the
+    /// user allows this app to control the other under Privacy & Security ▸
+    /// Automation, and a caller that swallows that leaves a click doing nothing
+    /// with nothing to show for it.
+    @discardableResult
+    private func runAppleScript(_ source: String) -> Bool {
+        guard let script = NSAppleScript(source: source) else {
+            Self.log.error("could not compile the script")
+            return false
+        }
         var error: NSDictionary?
         script.executeAndReturnError(&error)
+        guard let error else { return true }
+        let number = error[NSAppleScript.errorNumber] as? Int ?? 0
+        let message = error[NSAppleScript.errorMessage] as? String ?? "\(error)"
+        Self.log.error("apple event refused (\(number)): \(message, privacy: .public)")
+        return false
     }
 }
