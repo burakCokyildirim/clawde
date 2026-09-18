@@ -130,6 +130,7 @@ ClawdeWidget/                          # Widget extension target
 ClawdeWidgetExtension.entitlements     # App Sandbox + App Groups (widget)
 
 ClawdeTests/                           # Unit tests (Swift Testing)
+  ReadmeAssets.swift                   # Renders the README's pictures and animations; skipped unless asked for
 
 clawde-plugin/                         # The hook plugin, a submodule of burakCokyildirim/clawde-plugin (Rust)
   plugins/clawde/
@@ -140,7 +141,9 @@ clawde-plugin/                         # The hook plugin, a submodule of burakCo
   .claude-plugin/marketplace.json      # Marketplace definition
   crates/                              # The Rust sources for both binaries
 
-assets/                                # Marketing assets (screenshots, icons)
+assets/                                # README pictures; readme/ holds the animated PNGs, all rendered by
+                                       # ReadmeAssets from the real views and engine — re-run it when a character,
+                                       # the bubble or the popover changes
 ```
 
 ### Profiles

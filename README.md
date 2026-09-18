@@ -1,50 +1,86 @@
-# Clawde
+<p align="center">
+  <img src="Clawde/Assets.xcassets/AppIcon.appiconset/Clawde-256x256@1x.png" width="112" alt="">
+</p>
 
-A desktop pet that acts out your Claude Code sessions, and a menu bar list of every one of them.
+<h1 align="center">Clawde</h1>
 
-![Clawde, with its speech bubble open over three sessions](assets/pet.png)
+<p align="center">
+  A desktop pet that acts out your Claude Code sessions,<br>
+  and a menu bar list of every one of them.
+</p>
 
-![macOS](https://img.shields.io/badge/macOS-15%2B-blue)
-![Swift](https://img.shields.io/badge/Swift-5.0-orange)
-![License](https://img.shields.io/badge/License-BSD_3--Clause-green)
+<p align="center">
+  <a href="https://github.com/burakCokyildirim/clawde/releases/latest"><img src="https://img.shields.io/github/v/release/burakCokyildirim/clawde?style=flat-square&label=download&color=D1684A" alt="Download the latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-15%2B-2B2F36?style=flat-square" alt="macOS 15 or newer">
+  <img src="https://img.shields.io/badge/signed_%26_notarized-2B2F36?style=flat-square" alt="Signed and notarized">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-BSD_3--Clause-2B2F36?style=flat-square" alt="BSD 3-Clause License"></a>
+</p>
+
+<p align="center">
+  <img src="assets/readme/hero.png" width="492" alt="Claudie with its speech bubble open over three sessions. The pointer moves onto the waiting session and Claudie waves, then onto the working one and Claudie pulls out a laptop and types, then back to Claudie, who puts the laptop away.">
+</p>
 
 Claude Code sessions run in windows you are not looking at. Clawde puts one small character above
 everything else, doing whatever the session that most wants you is doing: typing while it works,
 waving while it waits on you, dozing when there is nothing to say. You notice it out of the corner
 of your eye, click it, and you are in that session.
 
-## The pet
+## It acts out the session
 
-![Claudie, Nibble, Quack and Kernel](assets/characters.png)
+<p align="center">
+  <img src="assets/readme/mood-active.png" width="120" alt="Active: Claudie pulls out a laptop, types, and puts it away">
+  <img src="assets/readme/mood-waiting.png" width="120" alt="Waiting: Claudie waves">
+  <img src="assets/readme/mood-unread.png" width="120" alt="Unread: a speech bubble bobs beside Claudie's head">
+  <img src="assets/readme/mood-compacting.png" width="120" alt="Compacting: Claudie squashes down and kicks up dust">
+  <img src="assets/readme/mood-idle.png" width="120" alt="Idle: Claudie dozes">
+  <img src="assets/readme/mood-resting.png" width="120" alt="Resting: Claudie blinks, with no session running">
+</p>
 
-Four characters, each drawn frame by frame on a 20×16 canvas. **Claudie** pulls out a laptop and
-types, **Nibble**'s eyes turn into see-sawing braces, **Quack** inspects the work through a
-magnifying glass, **Kernel** pops out tiles of code. Every mood has its own animation — working,
-waiting on you, an answer nobody has read, compacting, idle, and resting when nothing is running —
-each with an entrance and an exit, so the laptop is never dropped in mid-air.
+Every mood has its own animation, each with an entrance and an exit, so the laptop is never
+dropped in mid-air. The pet stands for the session that most wants you — one waiting on you first,
+then an answer nobody has read, then work in progress — and the badge beside its head counts the
+sessions that are busy, in the colour of whatever it is showing. It hops when a session takes up
+something new.
+
+## Four characters
+
+<p align="center">
+  <img src="assets/readme/cast-claudie.png" width="136" alt="Claudie, pulling out a laptop to type">
+  <img src="assets/readme/cast-nibble.png" width="136" alt="Nibble, its eyes turning into see-sawing braces">
+  <img src="assets/readme/cast-quack.png" width="136" alt="Quack, inspecting the work through a magnifying glass">
+  <img src="assets/readme/cast-kernel.png" width="136" alt="Kernel, popping out tiles of code">
+</p>
+
+**Claudie** pulls out a laptop and types, **Nibble**'s eyes turn into see-sawing braces, **Quack**
+inspects the work through a magnifying glass, **Kernel** pops out tiles of code. Each is drawn frame
+by frame on a 20 × 16 canvas and sized in whole points per pixel, from 60 × 48 up to 300 × 240, so
+the art stays crisp at any size. Pick one in Settings.
+
+## Living with it
 
 - **Hover** and a bubble opens out of the badge, listing every session that is doing something,
   then the idle one that did something last. Each line reads like the menu bar's: the session's
   name over its folder and host app, its state over how long ago. Move along the lines and the pet
   acts out that session; click one and it opens.
-- **The badge** beside its head counts the sessions that want attention, in the colour of whatever
-  the pet is showing.
-- **It hops** when a session takes up something new, and when you click it.
-- **Click** to jump to the session, **drag** to move it — anywhere below the menu bar, the Dock's
-  edge included — **right-click** for the session list, settings, or to send it away.
-- **Size** is a slider, from 60 × 48 points to 300 × 240, whole points per pixel so the art stays
-  crisp. Under Reduce Motion each mood holds a single still frame.
+- **Click** the pet to jump to its session, **drag** it anywhere below the menu bar — the Dock's
+  edge included — and **right-click** for the session list, settings, or to send it away.
+- **Reduce Motion** is honoured: each mood holds a single still frame, and nothing hops.
+- **It costs next to nothing.** The pet polls nothing of its own and runs no timer while it is
+  hidden or covered; it wakes only when the frame on screen is due to change.
 
-Off by default. Turn it on in Settings, or with the paw button at the top of the menu bar dropdown.
+The pet is off by default. Turn it on in Settings, or with the paw button at the top of the menu
+bar dropdown.
 
 ## In the menu bar
 
-![The menu bar list, with three sessions and the day's usage](assets/menu-bar.png)
+<p align="center">
+  <img src="assets/menu-bar.png" width="300" alt="The menu bar dropdown listing four sessions — waiting, unread, active and idle — with the day's usage bar underneath">
+</p>
 
 Every live session, the one that most wants you at the top: what it is doing, the name it goes by,
 its folder and host app, and how long ago it last moved. Click a row and Clawde brings that session
-forward — the right tab in iTerm2 or Ghostty, the right window in VS Code, Xcode or a JetBrains
-IDE, the right conversation in the Claude desktop app.
+forward — the right tab in iTerm2, Terminal or Ghostty, the right window in VS Code, Xcode or a
+JetBrains IDE, the right conversation in the Claude desktop app.
 
 | State | Dot | Meaning |
 |---|---|---|
@@ -82,13 +118,11 @@ The app offers to install the plugin on first launch.
 
 Download the [latest release](https://github.com/burakCokyildirim/clawde/releases/latest): open the
 `.pkg`, or unzip the `.zip` into `/Applications`. Both are signed with a Developer ID and notarized,
-so they open without argument. It runs in the menu bar with no Dock icon; the pet is off until you
-switch it on, from Settings or the paw button at the top of the dropdown. After that it updates
-itself.
+so they open without argument, and the app keeps itself up to date after that. It runs in the menu
+bar with no Dock icon.
 
-On first launch it offers to install its hook plugin, which is what tells it when a session changes
-state. Restart any Claude Code sessions that were already running — a session keeps the hooks it
-started with.
+On first launch it offers to install its hook plugin. Restart any Claude Code sessions that were
+already running — a session keeps the hooks it started with.
 
 Requires macOS 15 or newer and the Claude Code CLI.
 
@@ -102,7 +136,8 @@ xcodebuild -project Clawde.xcodeproj -scheme Clawde -configuration Release \
 ```
 
 That needs Xcode 26+. The `justfile` has the shortcuts used day to day (`just build`, `just test`,
-`just swap`).
+`just swap`). The pictures on this page are rendered from the app's own views and animation engine
+by `ClawdeTests/ReadmeAssets.swift`, which says how to run it.
 
 ### Upgrading from Claude Status
 
