@@ -98,8 +98,12 @@ shortcuts used day to day (`just build`, `just test`, `just swap`).
 Clawde was forked from [Claude Status](https://github.com/gmr/claude-status) and has since taken
 identifiers of its own, so the two are separate apps. If you have the old one:
 
-- **Disable its plugin**, or the old hook keeps the daemon and Clawde never hears about a change:
-  `claude plugin uninstall claude-status@claude-status-marketplace`.
+- **Uninstall its plugin**, or the old hook keeps the daemon and Clawde never hears about a
+  change: `claude plugin uninstall claude-status@claude-status-marketplace`. A Claude Code session
+  keeps the hooks it started with, so restart the sessions that are already running — until you
+  do, theirs still report to the old name and Clawde falls back to watching files and polling.
+- **Remove the old app from Finder**, not from a shell: macOS App Management refuses `rm` and `mv`
+  on an installed app bundle even for an admin.
 - Everything you had set — the pet's place on screen, every setting, which sessions you had seen,
   the productivity history — is carried over the first time Clawde runs.
 - Widgets you had placed need adding again, and macOS asks once more for permission to send Apple
