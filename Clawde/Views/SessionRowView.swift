@@ -62,6 +62,12 @@ struct SessionRowView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                // One line, whatever it says. A tool name long enough to wrap —
+                // an MCP one reads like mcp__server__some_tool — used to take
+                // three lines, treble the row's height and push every row under
+                // it down the list.
+                .lineLimit(1)
+                .truncationMode(.tail)
             }
 
             Spacer()
@@ -74,6 +80,10 @@ struct SessionRowView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
+            // The state and how long ago are what the eye runs down the list
+            // for, so they keep their width and the details give way.
+            .lineLimit(1)
+            .layoutPriority(1)
         }
         .padding(.vertical, 5)
         .padding(.horizontal, 14)
