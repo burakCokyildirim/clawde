@@ -275,7 +275,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
+          # --clobber so re-cutting a release replaces its assets instead of
+          # failing on the ones already there.
+          gh release upload --clobber "${{ github.event.release.tag_name }}" \
             "${{ steps.package.outputs.zip_name }}" \
             "${{ steps.pkg.outputs.pkg_name }}"
 
