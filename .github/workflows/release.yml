@@ -247,7 +247,10 @@ jobs:
           mkdir pkgroot
           ditto "$APP_PATH" "pkgroot/Clawde.app"
           pkgbuild --analyze --root pkgroot component.plist
-          /usr/libexec/PlistBuddy -c "Add :0:BundleIsRelocatable bool false" component.plist
+          # Whether --analyze writes the key depends on the Xcode on the
+          # runner, so set it if it is there and add it if it is not.
+          /usr/libexec/PlistBuddy -c "Set :0:BundleIsRelocatable false" component.plist \
+            || /usr/libexec/PlistBuddy -c "Add :0:BundleIsRelocatable bool false" component.plist
           pkgbuild \
             --root pkgroot \
             --component-plist component.plist \
