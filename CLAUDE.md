@@ -91,7 +91,8 @@ Clawde/                                # Main app target
     ClaudeDesktopFocusLog.swift        # Which session the desktop app has on screen, from the app's own log
     ProductivityTracker.swift          # Time-in-state tracking, concurrency, score (persists to App Group)
     PluginDetector.swift               # Checks installed_plugins.json and settings.json for hook status
-    PluginInstaller.swift              # Installs/uninstalls bundled plugin via `claude plugin` CLI
+    PluginInstaller.swift              # Installs/uninstalls bundled plugin via `claude plugin` CLI; finds the
+                                       # binary in the usual places, then asks the login shell
   Pet/                                 # Optional always-on-top desktop pet (off by default)
     PetPresenter.swift                 # Pure: [ClaudeSession] -> the one session the pet represents
     PetSettings.swift                  # Settings value + enums, read from App Group defaults
@@ -112,6 +113,7 @@ Clawde/                                # Main app target
     ProductivityBarView.swift          # Visual productivity tracking bar
     PetView.swift                      # SwiftUI Canvas: sprite render, count badge
     PetBubbleView.swift                # Pet speech bubble: busy and recent idle sessions, as session list rows
+    PluginSetupView.swift              # The /plugin steps, for a machine with no `claude` to run
 
 Shared/                                # Models shared between app and widget
   ClaudeSession.swift                  # ClaudeSession model, SessionState enum, SessionSource enum
@@ -152,7 +154,7 @@ The app supports multiple Claude Code profiles (config dirs selected via `CLAUDE
 
 ### Session Discovery Pipeline
 
-1. **Plugin hook** (`session-status`) fires on Claude Code lifecycle events and writes `.cstatus` JSON to `<profile>/projects/<encoded-path>/<session-id>.cstatus`
+1. **Plugin hook** (`session-status`) fires on Claude Code lifecycle events and writes `.cstatus` JSON to `<profile>/projects/<encoded-path>/<session-id>.cstatus`. Installing it needs the `claude` CLI, which someone who only uses Claude Code inside the Claude desktop app does not have — the desktop app has Claude Code built in and ships no CLI. `PluginSetupView` hands those users the `/plugin marketplace add <bundled path>`, `/plugin install clawde@clawde-marketplace` and `/reload-plugins` steps to run in a session instead; a plugin's hooks reach a session only when it starts or after `/reload-plugins`
 2. **SessionDiscovery** scans each enabled profile's `projects/*/` for `.cstatus` files, parses JSON (session ID, PID, state, activity, cwd), validates PIDs with `kill(pid, 0)`
 3. **Source classification** walks the process tree via `proc_pidinfo`/`proc_pidpath` and reads environment variables via `sysctl KERN_PROCARGS2` to identify the host app
 4. **SessionMonitor** (`@Observable`) maintains the session list with three update mechanisms:
