@@ -3,12 +3,12 @@
     <channel>
         <title>Clawde</title>
         <item>
-            <title>2.0.6</title>
-            <pubDate>Tue, 22 Sep 2026 20:47:29 +0000</pubDate>
-            <sparkle:version>11</sparkle:version>
-            <sparkle:shortVersionString>2.0.6</sparkle:shortVersionString>
+            <title>2.0.7</title>
+            <pubDate>Tue, 22 Sep 2026 22:29:23 +0000</pubDate>
+            <sparkle:version>12</sparkle:version>
+            <sparkle:shortVersionString>2.0.7</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/burakCokyildirim/clawde/releases/download/v2.0.6/Clawde-2.0.6.zip" length="3144263" type="application/octet-stream" sparkle:edSignature="IjAc5RXkSl9cJIPyKtz2wNTM4g4zYA8erzOqHWsJZFC9zo2n3Q/niQnFrhwqFt1qm/T6TfafyAf9DkhUSXVzCg=="/>
+            <enclosure url="https://github.com/burakCokyildirim/clawde/releases/download/v2.0.7/Clawde-2.0.7.zip" length="3149703" type="application/octet-stream" sparkle:edSignature="25IkVCcaZ8HaMO0/qtJAWehZ1idEBX2a3p4Qw5qOkNLkwMerappmExB1+vVvHPnEMtZ6+JqyIGP5LOfxyW5pCQ=="/>
         </item>
     </channel>
 </rss>
