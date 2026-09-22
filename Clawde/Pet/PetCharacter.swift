@@ -225,4 +225,16 @@ nonisolated enum PetProp {
         "....",
         "..w.",
     ]
+
+    /// The same mark being written: the hook a stroke at a time, then with its
+    /// dot a row high on its way down. `question` is where the dot lands.
+    static let questionStrokes: [PetPart] = [
+        ["....", "w...", "....", "....", "....", "...."],
+        [".w..", "w...", "....", "....", "....", "...."],
+        [".ww.", "w...", "....", "....", "....", "...."],
+        [".ww.", "w..w", "....", "....", "....", "...."],
+        [".ww.", "w..w", "...w", "....", "....", "...."],
+        [".ww.", "w..w", "...w", "..w.", "....", "...."],
+    ]
+    static let questionDotFalling: PetPart = [".ww.", "w..w", "...w", "..w.", "..w.", "...."]
 }

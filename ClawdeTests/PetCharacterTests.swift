@@ -67,6 +67,42 @@ struct PetCharacterTests {
         }
     }
 
+    /// The question is written a stroke at a time and ends as the finished mark,
+    /// so the loop never shows a stroke that is not in it.
+    @Test func theQuestionIsWrittenOneStrokeAtATimeIntoTheFinishedMark() {
+        func cells(_ part: PetPart) -> Set<[Int]> {
+            var set = Set<[Int]>()
+            for (y, row) in part.rows.enumerated() {
+                for (x, key) in row.enumerated() where key != "." { set.insert([x, y]) }
+            }
+            return set
+        }
+        let finished = cells(PetProp.question)
+        var drawn = Set<[Int]>()
+        for stroke in PetProp.questionStrokes {
+            let now = cells(stroke)
+            #expect(now.isSuperset(of: drawn))
+            #expect(now.count == drawn.count + 1)
+            #expect(now.isSubset(of: finished))
+            drawn = now
+        }
+        // The hook is done, and the dot is all that is left to drop in.
+        #expect(finished.subtracting(drawn).count == 1)
+        #expect(cells(PetProp.questionDotFalling).subtracting(drawn).count == 1)
+    }
+
+    /// Claudie waiting, held still under Reduce Motion, still has its question up.
+    @Test func claudieStillAsksWhenMotionIsReduced() {
+        let still = PetCharacter.claudie.still(for: .waiting)
+        let question = PetFrame(0, PetProp.question.at(15, 1))
+        for (y, row) in question.rows.enumerated() {
+            for (x, key) in row.enumerated() where key != "." {
+                let drawn = Array(still.rows[y])[x]
+                #expect(drawn == key)
+            }
+        }
+    }
+
     @Test func aFrameStacksItsLayersAndCutsAwayWhatFallsOffTheCanvas() {
         let back: PetPart = ["aaa", "aaa"]
         let front: PetPart = ["b.b"]

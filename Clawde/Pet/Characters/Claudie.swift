@@ -3,7 +3,8 @@ import Foundation
 nonisolated extension PetCharacter {
 
     /// Pulls a laptop out from behind itself and types, stopping now and then to
-    /// think. Waves while it is waiting on you, and dozes off when the session is idle.
+    /// think. Writes a question over its head while it is waiting on you, and dozes
+    /// off when the session is idle.
     static let claudie = PetCharacter(
         palette: [
             "b": 0xD1684A, "e": 0x000000, "g": 0x7C7C7B, "w": 0xF4F1EC
@@ -58,17 +59,34 @@ nonisolated extension PetCharacter {
                 PetFrame(83, Part.settle.at(0, 5)),
             ]
         ),
+        // Writes a question over its head, looking up at it as it goes, lets the
+        // dot drop in, and waits. Then it fidgets, and writes it again. The mark
+        // stays put: it is the question, and Claudie is the one who is waiting.
         waiting: PetRoutine(
             loop: [
-                // A question bobbing over the wave, as Nibble and Quack hold one
-                // up: waving alone reads as hello rather than as asking.
-                PetFrame(200, Part.waveA.at(0, 5), PetProp.question.at(15, 3)),
-                PetFrame(200, Part.waveB.at(0, 5), PetProp.question.at(15, 2)),
-                PetFrame(200, Part.waveA.at(0, 5), PetProp.question.at(16, 1)),
-                PetFrame(200, Part.waveB.at(0, 5), PetProp.question.at(15, 2)),
-                PetFrame(420, Part.rest.at(0, 5), PetProp.question.at(15, 3)),
-                PetFrame(140, Part.eyesShut.at(0, 5), PetProp.question.at(15, 3)),
-            ]
+                PetFrame(250, Part.rest.at(0, 5)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[0].at(15, 1)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[1].at(15, 1)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[2].at(15, 1)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[3].at(15, 1)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[4].at(15, 1)),
+                PetFrame(70, Part.lookUp.at(0, 5), PetProp.questionStrokes[5].at(15, 1)),
+                PetFrame(60, Part.lookUp.at(0, 5), PetProp.questionDotFalling.at(15, 1)),
+                PetFrame(90, Part.lookUp.at(0, 5), PetProp.question.at(15, 1)),
+                PetFrame(60, Part.lookUp.at(0, 5), PetProp.questionDotFalling.at(15, 1)),
+                PetFrame(1000, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
+                // Fidgets from side to side.
+                PetFrame(50, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
+                PetFrame(50, Part.rest.at(-1, 5), PetProp.question.at(15, 1)),
+                PetFrame(50, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
+                PetFrame(50, Part.rest.at(-1, 5), PetProp.question.at(15, 1)),
+                PetFrame(60, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
+                PetFrame(500, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
+                PetFrame(140, Part.eyesShut.at(0, 5), PetProp.question.at(15, 1)),
+                PetFrame(300, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
+            ],
+            // Held still, it has to say question on its own.
+            still: 10
         ),
         unread: PetRoutine(
             loop: [
@@ -122,6 +140,21 @@ nonisolated private enum Part {
         "....................",
         "........bbbbbbbb....",
         "........bebbbbeb....",
+        "......bbbbbbbbbbbb..",
+        "......bbbbbbbbbbbb..",
+        "........bbbbbbbb....",
+        "........bbbbbbbb....",
+        "........b.b..b.b....",
+        "........b.b..b.b....",
+    ]
+
+    /// Eyes up a row: it looks at what is over its head.
+    static let lookUp: PetPart = [
+        "....................",
+        "....................",
+        "....................",
+        "........bebbbbeb....",
+        "........bbbbbbbb....",
         "......bbbbbbbbbbbb..",
         "......bbbbbbbbbbbb..",
         "........bbbbbbbb....",
