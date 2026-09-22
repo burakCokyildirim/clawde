@@ -56,6 +56,13 @@ inspects the work through a magnifying glass, **Kernel** pops out tiles of code.
 by frame on a 20 × 16 canvas and sized in whole points per pixel, from 60 × 48 up to 300 × 240, so
 the art stays crisp at any size. Pick one in Settings.
 
+**Draw your own.** A character is one Swift file of pixel art written as letters. Open this
+repository in Claude Code and run `/new-character`: it draws one with you, shows you every mood
+animated and wires it into the app (a cat that walks across the keyboard while it works, an
+octopus typing on four keyboards at once, a coffee mug that drains while the context compacts, a
+snail leaving a trail of semicolons). [Making a character](docs/characters.md) covers doing it by
+hand, and [CONTRIBUTING](CONTRIBUTING.md) how to send it in.
+
 ## Living with it
 
 - **Hover** and a bubble opens out of the badge, listing every session that is doing something,
@@ -189,6 +196,11 @@ identifiers of its own, so the two are separate apps. If you have the old one:
   way for this app to read it. Settings are quick to set again, and the pet is off until you say so.
 - Widgets you had placed need adding again, and macOS asks once more for permission to send Apple
   Events, because the app it granted that to is a different app now.
+
+## Contributing
+
+New characters, terminals and editors Clawde doesn't know yet, and bug fixes are all welcome.
+[CONTRIBUTING.md](CONTRIBUTING.md) has the setup and the ground rules.
 
 ## Credits
 

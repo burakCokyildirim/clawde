@@ -34,6 +34,12 @@ test-class class:
     xcodebuild -project "{{project}}" -scheme "{{scheme}}" \
         -only-testing:"ClawdeTests/{{class}}" test {{xcode_flags}}
 
+# Draw every mood of a pet character, or all of them, and open the result
+preview-character id="all":
+    TEST_RUNNER_PREVIEW_CHARACTER="{{id}}" xcodebuild -project "{{project}}" -scheme "{{scheme}}" \
+        -only-testing:"ClawdeTests/CharacterPreview" test {{xcode_flags}}
+    open build/character-preview/index.html
+
 # Clean build artifacts
 clean:
     xcodebuild -project "{{project}}" -scheme "{{scheme}}" clean {{xcode_flags}}

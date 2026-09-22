@@ -13,6 +13,7 @@ just build-plugin   # cargo build the two hook binaries into the plugin's script
 just build          # Build debug configuration (runs build-plugin first)
 just test           # Run all unit tests
 just test-class PetLayoutTests     # Run a single test class
+just preview-character nibble      # Draw every mood of a pet character (or all) and open the page
 just clean          # Clean build artifacts
 just swap           # Build, copy to /Applications, and relaunch
 just sync-plugin    # Sync the plugin into the installed plugin cache
@@ -133,6 +134,8 @@ ClawdeWidgetExtension.entitlements     # App Sandbox + App Groups (widget)
 
 ClawdeTests/                           # Unit tests (Swift Testing)
   ReadmeAssets.swift                   # Renders the README's pictures and animations; skipped unless asked for
+  CharacterPreview.swift               # Draws a character's every mood into build/character-preview/; skipped
+                                       # unless asked for (`just preview-character`)
 
 clawde-plugin/                         # The hook plugin, a submodule of burakCokyildirim/clawde-plugin (Rust)
   plugins/clawde/
@@ -142,6 +145,10 @@ clawde-plugin/                         # The hook plugin, a submodule of burakCo
     .claude-plugin/plugin.json         # Plugin metadata (version the app compares against)
   .claude-plugin/marketplace.json      # Marketplace definition
   crates/                              # The Rust sources for both binaries
+
+docs/characters.md                     # How a character is made: canvas, palette, moods, timing, wiring it in
+.claude/skills/new-character/          # The /new-character skill: designs one with a contributor, from that doc
+CONTRIBUTING.md                        # Setup, where things live, pull request ground rules
 
 assets/                                # README pictures; readme/ holds the animated PNGs, all rendered by
                                        # ReadmeAssets from the real views and engine — re-run it when a character,

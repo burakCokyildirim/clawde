@@ -59,7 +59,7 @@ struct ReadmeAssets {
     /// frame after the first carries only the rectangle that changed. ImageIO's
     /// own APNG writer stores every frame whole, which put the hero at 4.9 MB for
     /// what is mostly a few cells of an arm moving.
-    static func writeAPNG(_ frames: [(CGImage, Double)], named name: String) throws -> (Int, Int) {
+    static func writeAPNG(_ frames: [(CGImage, Double)], named name: String, in folder: URL = out) throws -> (Int, Int) {
         var merged: [(image: CGImage, delay: Double, data: Data)] = []
         for (image, delay) in frames where delay > 0.0005 {
             let data = bytes(image)
@@ -114,7 +114,7 @@ struct ReadmeAssets {
         }
         chunk("IEND", Data())
 
-        let url = Self.out.appendingPathComponent(name)
+        let url = folder.appendingPathComponent(name)
         try png.write(to: url)
         try verify(url, against: merged.map(\.image))
         return (merged.count, png.count)
@@ -258,7 +258,7 @@ struct ReadmeAssets {
 
     static func tile(
         _ character: PetCharacter, _ mood: PetMood, label: String, accent: Color?,
-        side: CGFloat, cell: CGFloat, named name: String
+        side: CGFloat, cell: CGFloat, named name: String, in folder: URL = out
     ) throws {
         let routine = character.routine(for: mood)
         var frames: [(PetFrame, Double)] = []
@@ -274,7 +274,7 @@ struct ReadmeAssets {
             (image(Tile(character: character, frame: frame, label: label, accent: accent, side: side, cell: cell),
                    size: CGSize(width: side, height: side)), delay)
         }
-        let (count, bytes) = try writeAPNG(images, named: name)
+        let (count, bytes) = try writeAPNG(images, named: name, in: folder)
         print("ANIM \(name): \(count) frames, \(bytes / 1024) KB")
     }
 
