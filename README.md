@@ -155,10 +155,16 @@ The same goes after Clawde updates the plugin: sessions keep the old version unt
 
 ## Install
 
-Download the [latest release](https://github.com/burakCokyildirim/clawde/releases/latest): open the
-`.pkg`, or unzip the `.zip` into `/Applications`. Both are signed with a Developer ID and notarized,
-so they open without argument, and the app keeps itself up to date after that. It runs in the menu
-bar with no Dock icon.
+With Homebrew:
+
+```bash
+brew install --cask burakcokyildirim/tap/clawde
+```
+
+Or download the [latest release](https://github.com/burakCokyildirim/clawde/releases/latest): open
+the `.pkg`, or unzip the `.zip` into `/Applications`. Both are signed with a Developer ID and
+notarized, so they open without argument, and the app keeps itself up to date after that. It runs
+in the menu bar with no Dock icon.
 
 On first launch it offers to install its hook plugin — see [Setting the plugin
 up](#setting-the-plugin-up), which is a different path if you use Claude Code through the Claude

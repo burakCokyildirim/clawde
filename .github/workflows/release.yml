@@ -345,3 +345,41 @@ jobs:
           git add appcast.xml
           git diff --cached --quiet || git commit -m "Update appcast for ${{ github.event.release.tag_name }}"
           git push
+
+  homebrew:
+    name: Update Homebrew Cask
+    needs: build
+    runs-on: ubuntu-latest
+    # The workflow's own token reaches this repository only, so pushing to the
+    # tap takes one of its own: a fine-grained token with contents read and
+    # write on burakCokyildirim/homebrew-tap. Skipped while it is unset.
+    env:
+      HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+    steps:
+      - name: Download zip artifact
+        if: env.HOMEBREW_TAP_TOKEN != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: app-zip
+
+      - name: Bump the cask
+        if: env.HOMEBREW_TAP_TOKEN != ''
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          ZIP_NAME: ${{ needs.build.outputs.zip_name }}
+        run: |
+          VERSION="${TAG#v}"
+          # The cask builds its download URL as v<version>/Clawde-<version>.zip.
+          test "$ZIP_NAME" = "Clawde-${VERSION}.zip"
+          SHA=$(sha256sum "$ZIP_NAME" | cut -d' ' -f1)
+          git clone "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/burakCokyildirim/homebrew-tap.git" tap
+          cd tap
+          sed -i -E "s/^  version \".*\"$/  version \"${VERSION}\"/; s/^  sha256 \".*\"$/  sha256 \"${SHA}\"/" Casks/clawde.rb
+          grep -q "version \"${VERSION}\"" Casks/clawde.rb
+          grep -q "sha256 \"${SHA}\"" Casks/clawde.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/clawde.rb
+          git diff --cached --quiet || git commit -m "clawde ${VERSION}"
+          git push
