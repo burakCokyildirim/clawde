@@ -122,20 +122,29 @@ that by running `claude plugin install`, so it works if you have the Claude Code
 **If you reach Claude Code through the Claude desktop app**, you have no `claude` command to run —
 the app has Claude Code built in and ships no CLI. Install it from inside any session instead, the
 desktop app's included. Clawde's dropdown says *No plugin installed*; **Set Up…** opens a window
-with these three, filled in with the path on your Mac and copyable:
+with these two, filled in with the path on your Mac and copyable:
 
 ```
 /plugin marketplace add /Applications/Clawde.app/Contents/Resources/clawde-plugin
 /plugin install clawde@clawde-marketplace
-/reload-plugins
 ```
 
 The desktop app's own plugin browser (**+** → **Plugins**) works too, once the marketplace above
-has been added.
+has been added. There is nothing to set up in the desktop app beyond that: it reads the same
+`~/.claude` as the CLI, so one install covers both.
 
-**Sessions keep the hooks they started with.** `/reload-plugins` brings the session you ran it in up
-to date; every other session that is already open starts reporting when it next starts — in the
-desktop app, when you open it again. Until then it is listed the slow way, or not at all.
+### Then start your sessions again
+
+**A session only reports if it started after the plugin was installed — or updated.** The plugin's
+daemon is started by the session's start and by nothing else, so a session already open when the
+plugin arrives never gets one; `/reload-plugins` does not change that. Until it starts again, such a
+session is listed the slow way, with its state guessed, or not at all.
+
+- **Claude desktop app:** quit it (⌘Q) and open it again. That restarts every session in it at once;
+  clicking a session that is already running does not.
+- **Terminal:** leave the session and pick it up again with `claude --resume`.
+
+The same goes after Clawde updates the plugin: sessions keep the old version until they start again.
 
 ## Install
 
@@ -146,7 +155,8 @@ bar with no Dock icon.
 
 On first launch it offers to install its hook plugin — see [Setting the plugin
 up](#setting-the-plugin-up), which is a different path if you use Claude Code through the Claude
-desktop app. Sessions that were already running keep the hooks they started with.
+desktop app — and then [start your sessions again](#then-start-your-sessions-again): only sessions
+that start after the plugin is in will report.
 
 Requires macOS 15 or newer, and Claude Code — the CLI or the desktop app.
 
@@ -169,9 +179,9 @@ Clawde was forked from [Claude Status](https://github.com/gmr/claude-status) and
 identifiers of its own, so the two are separate apps. If you have the old one:
 
 - **Uninstall its plugin**, or the old hook keeps the daemon and Clawde never hears about a
-  change: `claude plugin uninstall claude-status@claude-status-marketplace`. A Claude Code session
-  keeps the hooks it started with, so restart the sessions that are already running — until you
-  do, theirs still report to the old name and Clawde falls back to watching files and polling.
+  change: `claude plugin uninstall claude-status@claude-status-marketplace`. Then [start your
+  sessions again](#then-start-your-sessions-again) — until you do, they still report to the old
+  name and Clawde falls back to watching files and polling.
 - **Remove the old app from Finder**, not from a shell: macOS App Management refuses `rm` and `mv`
   on an installed app bundle even for an admin.
 - **Expect a fresh start.** Nothing carries over: macOS keeps a group container to the apps

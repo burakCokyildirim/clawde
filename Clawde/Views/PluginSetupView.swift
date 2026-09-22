@@ -27,12 +27,22 @@ struct PluginSetup {
                 "Install it",
                 "/plugin install \(PluginInstaller.pluginKey)"
             ),
-            (
-                "Start reporting from this session too",
-                "/reload-plugins"
-            ),
         ]
     }
+
+    /// What it takes for a session to report, said the same way everywhere.
+    ///
+    /// The plugin's daemon is started by the SessionStart hook and by nothing
+    /// else, so a session that was already running when the plugin arrived —
+    /// or was updated — never gets one: `/reload-plugins` registers the hooks,
+    /// but that session's start is long past. Only a session that starts again
+    /// reports.
+    static let restartAdvice = """
+
+        Sessions that were already open will not report until they start again:
+        \u{2022} Claude desktop app: quit it (\u{2318}Q) and open it again.
+        \u{2022} Terminal: leave the session and pick it up with claude --resume.
+        """
 }
 
 /// Walks through setting the plugin up by hand, and says what a session has to
@@ -64,12 +74,17 @@ struct PluginSetupView: View {
                 }
             }
 
-            Text("Sessions that were already open keep the hooks they started with. Step 3 brings "
-                 + "this one up to date; the rest pick it up when they "
-                 + "next start. In the Claude desktop app that means opening the session again.")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("3. Start the sessions again")
+                    .font(.system(size: 12, weight: .medium))
+                Text("A session only reports if it started after the plugin arrived — the one you "
+                     + "ran these in included. In the Claude desktop app, quit it (\u{2318}Q) and "
+                     + "open it again; in a terminal, leave the session and pick it up with "
+                     + "claude --resume.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             HStack {
                 Button("Reveal Plugin in Finder") {

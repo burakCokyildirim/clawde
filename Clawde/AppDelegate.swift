@@ -575,7 +575,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if failures.isEmpty {
             let successAlert = NSAlert()
             successAlert.messageText = "Plugin Installed"
-            successAlert.informativeText = "The Clawde plugin has been installed for: \(profiles.map(\.displayName).joined(separator: ", ")).\n\nA session keeps the hooks it started with, so sessions already open will not report yet: run /reload-plugins in one to bring it up to date, or open it again. In the Claude desktop app, that means clicking the session again."
+            successAlert.informativeText = "The Clawde plugin has been installed for: \(profiles.map(\.displayName).joined(separator: ", ")).\n\(PluginSetup.restartAdvice)"
             successAlert.alertStyle = .informational
             successAlert.runModal()
         } else {
