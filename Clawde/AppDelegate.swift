@@ -616,7 +616,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let hostingController = NSHostingController(rootView: settingsView)
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Clawde Settings"
-        window.styleMask = [.titled, .closable]
+        window.styleMask = [.titled, .closable, .resizable]
+        // Never taller than the screen it opens on, whatever it has to list.
+        let room = (window.screen ?? NSScreen.main)?.visibleFrame.height ?? 900
+        window.setContentSize(NSSize(width: 420, height: min(620, room - 80)))
+        window.contentMinSize = NSSize(width: 420, height: 320)
         window.center()
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)

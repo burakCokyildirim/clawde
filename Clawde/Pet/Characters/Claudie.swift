@@ -60,12 +60,14 @@ nonisolated extension PetCharacter {
         ),
         waiting: PetRoutine(
             loop: [
-                PetFrame(200, Part.waveA.at(0, 5)),
-                PetFrame(200, Part.waveB.at(0, 5)),
-                PetFrame(200, Part.waveA.at(0, 5)),
-                PetFrame(200, Part.waveB.at(0, 5)),
-                PetFrame(420, Part.rest.at(0, 5)),
-                PetFrame(140, Part.eyesShut.at(0, 5)),
+                // A question bobbing over the wave, as Nibble and Quack hold one
+                // up: waving alone reads as hello rather than as asking.
+                PetFrame(200, Part.waveA.at(0, 5), PetProp.question.at(15, 3)),
+                PetFrame(200, Part.waveB.at(0, 5), PetProp.question.at(15, 2)),
+                PetFrame(200, Part.waveA.at(0, 5), PetProp.question.at(16, 1)),
+                PetFrame(200, Part.waveB.at(0, 5), PetProp.question.at(15, 2)),
+                PetFrame(420, Part.rest.at(0, 5), PetProp.question.at(15, 3)),
+                PetFrame(140, Part.eyesShut.at(0, 5), PetProp.question.at(15, 3)),
             ]
         ),
         unread: PetRoutine(

@@ -152,8 +152,11 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        // Sized to its content, this window grew past the bottom of the screen
+        // once a few profiles were listed, with nothing to scroll: a grouped
+        // Form scrolls on its own, and `fixedSize` was taking that away.
         .frame(width: 420)
-        .fixedSize(horizontal: false, vertical: true)
+        .frame(minHeight: 320, idealHeight: 620, maxHeight: .infinity)
     }
 
     /// What the slider's position means on screen.
