@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let pluginInstaller = PluginInstaller()
     private var eventMonitor: Any?
     private var settingsWindow: NSWindow?
+    private var pluginSetupWindow: NSWindow?
     private var petSettings = PetSettings.load()
     private var petController: PetWindowController?
 
@@ -373,6 +374,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self?.closePopover()
                     self?.showSettings()
                 },
+                onSetUpPlugin: { [weak self] in
+                    self?.closePopover()
+                    self?.showPluginSetup(noCLIFound: self?.pluginInstaller.claudePath == nil)
+                },
                 onQuit: {
                     NSApplication.shared.terminate(nil)
                 }
@@ -480,18 +485,55 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showPluginInstallDialog(for profiles: [ClaudeProfile]) {
+        // Installing runs the `claude` command, and there is none to run for
+        // anyone who reaches Claude Code through the desktop app alone. Offer
+        // them the steps rather than a button that can only fail.
+        guard pluginInstaller.claudePath != nil else {
+            showPluginSetup(noCLIFound: true)
+            return
+        }
+
         let names = profiles.map(\.displayName).joined(separator: ", ")
         let alert = NSAlert()
         alert.messageText = "Install Claude Code Plugin?"
-        alert.informativeText = "Clawde requires a Claude Code plugin to report session activity. The plugin registers lightweight hooks that write status files as Claude works.\n\nProfiles without the plugin: \(names)\n\nYou can also install it later from Settings."
+        alert.informativeText = "Clawde needs a Claude Code plugin to hear what your sessions are doing. It registers hooks that write a status file as Claude works.\n\nProfiles without it: \(names)\n\nYou can also install it later from Settings."
         alert.alertStyle = .informational
         alert.addButton(withTitle: "Install Plugin")
+        alert.addButton(withTitle: "Show Me How\u{2026}")
         alert.addButton(withTitle: "Not Now")
 
-        let response = alert.runModal()
-        if response == .alertFirstButtonReturn {
-            performPluginInstall(for: profiles)
+        switch alert.runModal() {
+        case .alertFirstButtonReturn: performPluginInstall(for: profiles)
+        case .alertSecondButtonReturn: showPluginSetup()
+        default: break
         }
+    }
+
+    /// The steps for setting the plugin up by hand, in a window of its own.
+    func showPluginSetup(noCLIFound: Bool = false) {
+        if let existing = pluginSetupWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        let canInstall = pluginInstaller.claudePath != nil
+        let view = PluginSetupView(
+            noCLIFound: noCLIFound,
+            onInstallForMe: canInstall ? { [weak self] in
+                guard let self else { return }
+                self.pluginSetupWindow?.close()
+                self.performPluginInstall(for: self.monitor.profileStore.enabledProfiles)
+            } : nil,
+            onDone: { [weak self] in self?.pluginSetupWindow?.close() }
+        )
+        let window = NSWindow(contentViewController: NSHostingController(rootView: view))
+        window.title = "Clawde Plugin"
+        window.styleMask = [.titled, .closable]
+        window.center()
+        window.isReleasedWhenClosed = false
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        pluginSetupWindow = window
     }
 
     func performPluginUninstall(for profiles: [ClaudeProfile]) {
@@ -533,7 +575,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if failures.isEmpty {
             let successAlert = NSAlert()
             successAlert.messageText = "Plugin Installed"
-            successAlert.informativeText = "The Clawde plugin has been installed for: \(profiles.map(\.displayName).joined(separator: ", ")). It will activate the next time a Claude Code session starts."
+            successAlert.informativeText = "The Clawde plugin has been installed for: \(profiles.map(\.displayName).joined(separator: ", ")).\n\nA session keeps the hooks it started with, so sessions already open will not report yet: run /reload-plugins in one to bring it up to date, or open it again. In the Claude desktop app, that means clicking the session again."
             successAlert.alertStyle = .informational
             successAlert.runModal()
         } else {
@@ -652,6 +694,7 @@ private struct PopoverContentView: View {
     var onRefresh: () -> Void
     var onPetToggle: () -> Void
     var onSettings: () -> Void
+    var onSetUpPlugin: () -> Void
     var onQuit: () -> Void
 
     var body: some View {
@@ -659,6 +702,8 @@ private struct PopoverContentView: View {
             sessions: monitor.sessions,
             productivityData: monitor.productivityData,
             showProfileBadges: monitor.profileStore.enabledProfiles.count > 1,
+            isHookMissing: monitor.hookDetected == false,
+            onSetUpPlugin: onSetUpPlugin,
             onSessionTap: onSessionTap,
             onRefresh: onRefresh,
             onPetToggle: onPetToggle,

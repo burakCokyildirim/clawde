@@ -6,6 +6,9 @@ struct SessionListView: View {
     let productivityData: ProductivityData
     /// Show per-session profile badges (when more than one profile is enabled).
     var showProfileBadges: Bool = false
+    /// No profile has the hook, so nothing is reporting and the list is guesswork.
+    var isHookMissing: Bool = false
+    var onSetUpPlugin: (() -> Void)?
     var onSessionTap: ((ClaudeSession) -> Void)?
     var onRefresh: (() -> Void)?
     /// The pet was shown or hidden from the header, to act on it at once.
@@ -45,6 +48,11 @@ struct SessionListView: View {
             header
             Divider()
 
+            if isHookMissing {
+                pluginBanner
+                Divider()
+            }
+
             if sessions.isEmpty {
                 emptyState
             } else {
@@ -66,6 +74,36 @@ struct SessionListView: View {
     }
 
     // MARK: - Subviews
+
+    /// Without the plugin nothing reports, and the app cannot say much: sessions
+    /// turn up late through polling, and their state is a guess from the
+    /// transcript. Say so where it is noticed, rather than once on first launch.
+    private var pluginBanner: some View {
+        Button {
+            onSetUpPlugin?()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("No plugin installed")
+                        .font(.system(size: 12, weight: .medium))
+                    Text("State is guesswork until it is in.")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text("Set Up\u{2026}")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.accentColor)
+            }
+            .lineLimit(1)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
 
     private var header: some View {
         HStack(alignment: .bottom) {

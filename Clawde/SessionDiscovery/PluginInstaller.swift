@@ -34,15 +34,45 @@ struct PluginInstaller {
         return version
     }
 
-    /// Resolves the `claude` CLI binary path.
-    private var claudePath: String? {
+    /// Resolves the `claude` CLI binary, or nil when there is none to run.
+    ///
+    /// An app launched from the Dock inherits launchd's PATH, not the shell's,
+    /// so the usual places are checked first and the user's login shell is asked
+    /// only if none of them has it. Someone who reaches Claude Code through the
+    /// desktop app alone has no CLI at all — `PluginSetup` is the way in for them.
+    var claudePath: String? {
+        let home = FileManager.default.homeDirectoryForCurrentUser
         let candidates = [
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent(".local/bin/claude").path,
+            home.appendingPathComponent(".local/bin/claude").path,
+            home.appendingPathComponent(".claude/local/claude").path,
+            home.appendingPathComponent(".bun/bin/claude").path,
             "/usr/local/bin/claude",
             "/opt/homebrew/bin/claude",
+            "/opt/local/bin/claude",
         ]
-        return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
+        if let found = candidates.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
+            return found
+        }
+        return claudeFromLoginShell()
+    }
+
+    /// Asks the login shell where `claude` is, for an installation none of the
+    /// usual paths covers — a version manager's shims, say.
+    private func claudeFromLoginShell() -> String? {
+        let shell = ProcessInfo.processInfo.environment["SHELL"] ?? "/bin/zsh"
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: shell)
+        process.arguments = ["-lc", "command -v claude"]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = FileHandle.nullDevice
+        guard (try? process.run()) != nil else { return nil }
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        guard process.terminationStatus == 0 else { return nil }
+        let path = String(decoding: data, as: UTF8.self)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return FileManager.default.isExecutableFile(atPath: path) ? path : nil
     }
 
     // MARK: - Install

@@ -112,7 +112,30 @@ A Claude Code plugin — [clawde-plugin](https://github.com/burakCokyildirim/cla
 Rust daemon — hooks session lifecycle events, tails the session's JSONL transcript, writes state to
 `<project>/<session-id>.cstatus`, and posts a Darwin notification when it changes. Clawde also
 watches those files and polls every five seconds, so it still works if the notification is missed.
-The app offers to install the plugin on first launch.
+Without the plugin the app can still find sessions, but only by polling, and their state is a guess.
+
+### Setting the plugin up
+
+Clawde carries the plugin inside its own bundle and offers to install it on first launch. It does
+that by running `claude plugin install`, so it works if you have the Claude Code CLI.
+
+**If you reach Claude Code through the Claude desktop app**, you have no `claude` command to run —
+the app has Claude Code built in and ships no CLI. Install it from inside any session instead, the
+desktop app's included. Clawde's dropdown says *No plugin installed*; **Set Up…** opens a window
+with these three, filled in with the path on your Mac and copyable:
+
+```
+/plugin marketplace add /Applications/Clawde.app/Contents/Resources/clawde-plugin
+/plugin install clawde@clawde-marketplace
+/reload-plugins
+```
+
+The desktop app's own plugin browser (**+** → **Plugins**) works too, once the marketplace above
+has been added.
+
+**Sessions keep the hooks they started with.** `/reload-plugins` brings the session you ran it in up
+to date; every other session that is already open starts reporting when it next starts — in the
+desktop app, when you open it again. Until then it is listed the slow way, or not at all.
 
 ## Install
 
@@ -121,10 +144,11 @@ Download the [latest release](https://github.com/burakCokyildirim/clawde/release
 so they open without argument, and the app keeps itself up to date after that. It runs in the menu
 bar with no Dock icon.
 
-On first launch it offers to install its hook plugin. Restart any Claude Code sessions that were
-already running — a session keeps the hooks it started with.
+On first launch it offers to install its hook plugin — see [Setting the plugin
+up](#setting-the-plugin-up), which is a different path if you use Claude Code through the Claude
+desktop app. Sessions that were already running keep the hooks they started with.
 
-Requires macOS 15 or newer and the Claude Code CLI.
+Requires macOS 15 or newer, and Claude Code — the CLI or the desktop app.
 
 To build it instead:
 
