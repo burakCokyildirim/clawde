@@ -75,12 +75,12 @@ nonisolated extension PetCharacter {
                 PetFrame(90, Part.lookUp.at(0, 5), PetProp.question.at(15, 1)),
                 PetFrame(60, Part.lookUp.at(0, 5), PetProp.questionDotFalling.at(15, 1)),
                 PetFrame(1000, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
-                // Fidgets from side to side.
-                PetFrame(50, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
-                PetFrame(50, Part.rest.at(-1, 5), PetProp.question.at(15, 1)),
-                PetFrame(50, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
-                PetFrame(50, Part.rest.at(-1, 5), PetProp.question.at(15, 1)),
-                PetFrame(60, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
+                // Sways from side to side, at about the pace it used to wave: any
+                // quicker and it reads as a shiver rather than as waiting.
+                PetFrame(180, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
+                PetFrame(180, Part.rest.at(-1, 5), PetProp.question.at(15, 1)),
+                PetFrame(180, Part.rest.at(1, 5), PetProp.question.at(15, 1)),
+                PetFrame(180, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
                 PetFrame(500, Part.rest.at(0, 5), PetProp.question.at(15, 1)),
                 PetFrame(140, Part.eyesShut.at(0, 5), PetProp.question.at(15, 1)),
                 PetFrame(300, Part.rest.at(0, 5), PetProp.question.at(15, 1)),

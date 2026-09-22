@@ -303,8 +303,10 @@ struct ReadmeAssets {
             Self.session("Tidy the docs", folder: "clawde", state: .idle,
                          source: .terminal(app: "Terminal"), ago: 2400),
         ]
-        AppGroup.defaults?.set(true, forKey: PetSettings.Keys.enabled)
-        defer { AppGroup.defaults?.removeObject(forKey: PetSettings.Keys.enabled) }
+        // Nothing here writes to AppGroup.defaults: every build shares one App
+        // Group now, so from a test that is the user's own settings — and an
+        // ad-hoc signed test host writing into the release app's container
+        // stops on macOS's access prompt.
 
         let view = SessionListView(sessions: sessions, productivityData: ProductivityData(today: Self.day, allTime: Self.day))
         let host = NSHostingView(rootView: view.fixedSize())
