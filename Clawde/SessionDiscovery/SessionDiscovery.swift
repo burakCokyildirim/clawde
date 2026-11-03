@@ -328,8 +328,9 @@ struct SessionDiscovery {
             return .zed
         }
 
-        // Walk the ancestor chain starting from ppid
-        var current = ppid
+        // Walk the ancestor chain from Claude's parent, read live: a .cstatus
+        // written before plugin 3.1.4 has the user's group id where ppid goes.
+        var current = parentPid(for: pid) ?? ppid
         for _ in 0..<8 {
             guard current > 1 else { break }
 
